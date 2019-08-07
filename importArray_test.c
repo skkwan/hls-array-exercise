@@ -22,7 +22,7 @@ int main()
   if (inFile == NULL)
     {
       printf("File not found, exiting.\n");
-      return 0;
+      return 1;
     }
   
   /* fscanf() reads until it meets the newline character \n. */
@@ -31,9 +31,9 @@ int main()
       for (c = 0; c < NCOLS; c++)
 	{
 	  fscanf(inFile, "%f", &arr[r][c]);
-	  printf("%f ", arr[r][c]);
+	  // printf("%f", arr[r][c]);
 	}
-      printf("\n");
+      // printf("\n");
     }
 
   fclose(inFile);
@@ -49,12 +49,28 @@ int main()
     {
       for (c = 0; c < NCOLS; c++)
 	{
-	  fprintf(outFile, "%f", arr[r][c]);
+	  fprintf(outFile, "%1.1f ", arr[r][c]);
 	}
       fprintf(outFile, "\n");
     }
+  fprintf(outFile, "\n");
   fclose(outFile);
-  return 0;
+
+  printf("Comparing against the original table: \n");
+  if (system("diff -w weights-OUT.txt weights-MINI.txt"))
+    {
+      fprintf(stdout, "*******************************************\n");
+      fprintf(stdout, "FAIL: Output DOES NOT match the golden output\n");
+      fprintf(stdout, "*******************************************\n");
+      return 1;
+    }
+  else
+    {
+      fprintf(stdout, "*******************************************\n");
+      fprintf(stdout, "PASS: The output matches the golden output!\n");
+      fprintf(stdout, "*******************************************\n");
+      return 0;
+    }
 }
 
 
